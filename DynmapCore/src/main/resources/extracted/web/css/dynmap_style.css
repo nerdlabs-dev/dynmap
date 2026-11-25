@@ -1268,3 +1268,33 @@ div.statusmessage {
 .pinnedloginbutton {
 	margin-right: 201px;
 }
+
+/* nerdlabs: rotate button for multi-angle 3D views (sits under the compass) */
+.rotatebutton {
+    position: absolute;
+    z-index: 10;
+    top: 112px;
+    right: 52px;
+    width: 44px;
+    height: 44px;
+    line-height: 42px;
+    text-align: center;
+    font-size: 28px;
+    color: #fff;
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 50%;
+    cursor: pointer;
+    user-select: none;
+}
+.rotatebutton:hover {
+    background: rgba(0, 0, 0, 0.85);
+}
+.mobilerotate {
+    top: 54px;
+    right: 10px;
+    width: 40px;
+    height: 40px;
+    line-height: 38px;
+    font-size: 24px;
+}

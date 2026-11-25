@@ -20,6 +20,7 @@ import org.dynmap.utils.TileFlags;
 import org.json.simple.JSONObject;
 
 public class HDMap extends MapType {
+    private String anglegroup;  // nerdlabs: maps sharing this value are angles of one 3D view
 
     private String name;
     private String prefix;
@@ -50,6 +51,7 @@ public class HDMap extends MapType {
     public HDMap(DynmapCore core, ConfigurationNode configuration) {
         this.core = core;
         name = configuration.getString("name", null);
+        anglegroup = configuration.getString("angle-group", null); // nerdlabs: 3D rotate button
         if(name == null) {
             Log.severe("HDMap missing required attribute 'name' - disabled");
             return;
@@ -287,6 +289,8 @@ public class HDMap extends MapType {
         s(o, "image-format", imgformat.getFileExt());
         if(append_to_world.length() > 0)
             s(o, "append_to_world", append_to_world);
+        if(anglegroup != null)
+            s(o, "anglegroup", anglegroup);
         perspective.addClientConfiguration(o);
         shader.addClientConfiguration(o);
         lighting.addClientConfiguration(o);

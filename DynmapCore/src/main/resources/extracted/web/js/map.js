@@ -270,15 +270,30 @@ DynMap.prototype = {
 				    worldName = 'world';
 				    mapName = [ 'surface', 'flat', 'biome', 'cave' ].includes(mapindex) ? mapindex : 'flat';
 				}
+				// nerdlabs: the angles of one 3D view share a single list entry; the rotate button steps through them
+				var listTitle = map.options.title;
+				if (map.options.anglegroup) {
+					world.angleGroups = world.angleGroups || {};
+					var grp = world.angleGroups[map.options.anglegroup];
+					if (grp) {
+						grp.push(map);
+						map.element = grp[0].element;
+						return;
+					}
+					world.angleGroups[map.options.anglegroup] = [map];
+					listTitle = listTitle.replace(/ \([A-Z]+\)$/, '');
+				}
 				map.element = $('<li/>')
 					.addClass('map item')
 					.append($('<a/>')
-							.attr({ title: map.options.title, href: '#' })
+							.attr({ title: listTitle, href: '#' })
 							.addClass('maptype')
 							.css({ backgroundImage: 'url(' + (map.options.icon || ('images/block_' + worldName + '_' + mapName + '.png')) + ')' })
-							.text(map.options.title)
+							.text(listTitle)
 					)
 					.click(function() {
+						var cur = me.angleGroupOf(me.maptype);
+						if (cur && cur.indexOf(map) >= 0) return; // already looking at this 3D view
 						me.selectMap(map);
 					})
 					.data('map', map)
@@ -312,6 +327,20 @@ DynMap.prototype = {
 				compass.addClass('mobilecompass');
 			
 			compass.appendTo(container);
+		}
+
+		// nerdlabs: rotate button for 3D views drawn from several angles
+		if (!me.nogui) {
+			me.rotatebutton = $('<div/>')
+				.addClass('rotatebutton')
+				.attr('title', 'Rotate 3D view')
+				.text('\u27F3')
+				.hide()
+				.click(function() { me.rotateView(); })
+				.appendTo(container);
+			if (L.Browser.mobile)
+				me.rotatebutton.addClass('mobilerotate');
+			$(me).bind('mapchanged', function() { me.updateRotateButton(); });
 		}
 		
 		if(me.options.sidebaropened != 'true') {
@@ -563,6 +592,25 @@ DynMap.prototype = {
 		if (completed) {
 			completed();
 		}
+	},
+	angleGroupOf: function(map) {
+		if (!map || !map.options.anglegroup || !map.options.world || !map.options.world.angleGroups)
+			return null;
+		return map.options.world.angleGroups[map.options.anglegroup] || null;
+	},
+	rotateView: function() {
+		var grp = this.angleGroupOf(this.maptype);
+		if (!grp || grp.length < 2) return;
+		var i = grp.indexOf(this.maptype);
+		this.selectMap(grp[(i + 1) % grp.length]);
+	},
+	updateRotateButton: function() {
+		if (!this.rotatebutton) return;
+		var grp = this.angleGroupOf(this.maptype);
+		if (grp && grp.length > 1)
+			this.rotatebutton.attr('title', 'Rotate 3D view (now looking ' + (this.maptype.options.compassview || '') + ')').show();
+		else
+			this.rotatebutton.hide();
 	},
 	selectMap: function(map, completed) {
 		this.selectMapAndPan(map, null, completed);
