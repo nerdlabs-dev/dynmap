@@ -4,13 +4,18 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Dynmap is a dynamic web mapping plugin/mod for Minecraft servers. It's a multi-platform project supporting Spigot/PaperMC, Forge, and Fabric across multiple Minecraft versions (1.12.2 - 1.21.x).
+Dynmap is a dynamic web mapping plugin for Minecraft servers.
+
+**This is the nerdlabs fork (branch `nerdlabs`), trimmed to Paper 26.x only.** All Forge, Fabric and pre-26 `bukkit-helper-*`
+modules were removed. Modules left: `DynmapCoreAPI`, `DynmapCore`, `dynmap-api`, `bukkit-helper` (shared base),
+`paper-helper-26x` (the only version helper) and `spigot` (the plugin). We maintain updates ourselves rather than
+tracking the community edition closely, so the upstream contribution rules below are kept for reference only.
 
 ## Build Commands
 
 ```bash
-# Build all platforms (requires JDK 25, see below)
-./gradlew build
+# Build the Paper plugin jar (requires JDK 25) -> target/Dynmap-CE-*-spigot.jar
+./gradlew :spigot:build
 
 # Build outputs go to /target directory
 

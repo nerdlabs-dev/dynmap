@@ -49,78 +49,6 @@ dependencies {
     implementation(project(':bukkit-helper')) {
         transitive = false
     }
-    runtimeOnly(project(':bukkit-helper-113-2')) {
-        transitive = false
-    }
-    runtimeOnly(project(':bukkit-helper-114-1')) {
-        transitive = false
-    }
-    runtimeOnly(project(':bukkit-helper-115')) {
-        transitive = false
-    }
-    runtimeOnly(project(':bukkit-helper-116')) {
-        transitive = false
-    }
-    runtimeOnly(project(':bukkit-helper-116-2')) {
-        transitive = false
-    }
-    runtimeOnly(project(':bukkit-helper-116-3')) {
-        transitive = false
-    }
-    runtimeOnly(project(':bukkit-helper-116-4')) {
-        transitive = false
-    }
-    runtimeOnly(project(':bukkit-helper-117')) {
-        transitive = false
-    }
-    runtimeOnly(project(':bukkit-helper-118')) {
-    	transitive = false
-    }
-    runtimeOnly(project(':bukkit-helper-118-2')) {
-    	transitive = false
-    }
-    runtimeOnly(project(':bukkit-helper-119')) {
-    	transitive = false
-    }
-    runtimeOnly(project(':bukkit-helper-119-3')) {
-    	transitive = false
-    }
-    runtimeOnly(project(':bukkit-helper-119-4')) {
-    	transitive = false
-    }
-    runtimeOnly(project(':bukkit-helper-120')) {
-    	transitive = false
-    }
-    runtimeOnly(project(':bukkit-helper-120-2')) {
-    	transitive = false
-    }
-    runtimeOnly(project(':bukkit-helper-120-4')) {
-    	transitive = false
-    }
-    runtimeOnly(project(':bukkit-helper-120-5')) {
-    	transitive = false
-    }
-    runtimeOnly(project(':bukkit-helper-121')) {
-        transitive = false
-    }
-    runtimeOnly(project(':bukkit-helper-121-3')) {
-        transitive = false
-    }
-    runtimeOnly(project(':bukkit-helper-121-4')) {
-        transitive = false
-    }
-    runtimeOnly(project(':bukkit-helper-121-5')) {
-        transitive = false
-    }
-    runtimeOnly(project(':bukkit-helper-121-6')) {
-        transitive = false
-    }
-    runtimeOnly(project(':bukkit-helper-121-10')) {
-        transitive = false
-    }
-    runtimeOnly(project(':bukkit-helper-121-11')) {
-        transitive = false
-    }
     runtimeOnly(project(path: ':paper-helper-26x', configuration: 'paperHelper')) {
         transitive = false
     }
@@ -149,35 +77,10 @@ shadowJar {
         include(dependency(':dynmap-api'))
         include(dependency(":DynmapCore"))
         include(dependency(':bukkit-helper'))
-        include(dependency(':bukkit-helper-113-2'))
-        include(dependency(':bukkit-helper-114-1'))
-        include(dependency(':bukkit-helper-115'))
-        include(dependency(':bukkit-helper-116'))
-        include(dependency(':bukkit-helper-116-2'))
-        include(dependency(':bukkit-helper-116-3'))
-        include(dependency(':bukkit-helper-116-4'))
-        include(dependency(':bukkit-helper-117'))
-        include(dependency(':bukkit-helper-118'))
-        include(dependency(':bukkit-helper-118-2'))
-        include(dependency(':bukkit-helper-119'))
-        include(dependency(':bukkit-helper-119-3'))
-        include(dependency(':bukkit-helper-119-4'))
-        include(dependency(':bukkit-helper-120'))
-        include(dependency(':bukkit-helper-120-2'))
-        include(dependency(':bukkit-helper-120-4'))
-        include(dependency(':bukkit-helper-120-5'))
-        include(dependency(':bukkit-helper-121'))
-        include(dependency(':bukkit-helper-121-3'))
-        include(dependency(':bukkit-helper-121-4'))
-        include(dependency(':bukkit-helper-121-5'))
-        include(dependency(':bukkit-helper-121-6'))
-        include(dependency(':bukkit-helper-121-10'))
-        include(dependency(':bukkit-helper-121-11'))
         include(dependency(':paper-helper-26x'))
     }
     relocate('org.bstats', 'org.dynmap.bstats')
-    // Paper 1.20.5-1.21.4 remaps plugins with ASM that cannot read Java 25 class files (the 26.x helper): keep them
-    // where only a Java 25 runtime looks (the jar is multi-release)
+    // The 26.x helper is Java 25 bytecode; it lives where only a Java 25 runtime looks (the jar is multi-release)
     eachFile {
         if (it.path.startsWith('org/dynmap/bukkit/helper/v26x/')) {
             it.path = 'META-INF/versions/25/' + it.path
