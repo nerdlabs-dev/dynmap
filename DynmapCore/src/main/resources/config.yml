@@ -1,0 +1,70 @@
+# ==========================================================
+#  Dynmap (nerdlabs build) - the only file you need to edit
+# ==========================================================
+# After changing anything here, run /dynmap reload (or restart the server).
+# Changing quality, views or 3d-angles needs a re-render: /dynmap fullrender <world>
+
+web:
+  # Port the map web page runs on: http://your-server:8123
+  port: 8123
+  # Text in the browser tab
+  title: "Nerdlabs Network Map"
+
+maps:
+  # How close the closest zoom is. Affects disk space the most.
+  #   low    = 4 pixels per block  (smallest)
+  #   medium = 8 pixels per block  (good detail, 1/4 the space of high)
+  #   high   = 16 pixels per block (stock Dynmap, biggest)
+  quality: medium
+
+  # Which kinds of worlds get a map
+  overworld: true
+  nether: true
+  end: false
+
+  # Leave empty to map every world of the kinds above,
+  # or list world names to only map those, e.g. [ world, spawn ]
+  worlds: []
+
+  views:
+    flat: true      # top-down
+    3d: true        # angled view
+    caves: false    # see-through cave view (overworld only)
+
+  # How many sides the 3D view is drawn from: 1, 2, 4 or 8.
+  # Each extra angle costs about as much disk space as the first one.
+  3d-angles: 4
+
+players:
+  show-players: true
+  hide-invisible: true    # hide vanished players and players with invisibility potions
+  hide-sneaking: false
+  show-faces: true
+  show-health: false
+
+world-display:
+  hide-ores: true         # ores drawn as stone, so the map can't be used for x-ray
+  show-spawn: true
+  show-signs: false
+  show-border: true
+
+markers:
+  # Name of the marker layer on the map
+  layer-name: "Games"
+  # Pins on the map. Icons: redflag, blueflag, greenflag, star, house, portal, sign,
+  # temple, tower, cup, goldmedal, heart ... (see plugins/dynmap/web/tiles/_markers_)
+  list: []
+  #  - name: "Spleef"
+  #    world: world
+  #    x: 120
+  #    y: 64
+  #    z: -40
+  #    icon: redflag
+
+performance:
+  # slow / normal / fast - how hard Dynmap works the CPU while drawing maps
+  render-speed: normal
+
+# Set to true to ignore this file and use the stock configuration.txt,
+# worlds.txt and templates instead (only for experts).
+advanced-mode: false

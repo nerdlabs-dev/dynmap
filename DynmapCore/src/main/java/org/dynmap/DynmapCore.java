@@ -107,6 +107,8 @@ public class DynmapCore implements DynmapCommonAPI {
     public PlayerList playerList;
     public ConfigurationNode configuration;
     public ConfigurationNode world_config;
+    /* nerdlabs: config.yml (simple settings); null until initConfiguration runs */
+    private SimpleConfig simpleConfig;
     public ComponentManager componentManager = new ComponentManager();
     public DynmapListenerManager listenerManager = new DynmapListenerManager(this);
     public PlayerFaces playerfacemgr;
@@ -414,6 +416,10 @@ public class DynmapCore implements DynmapCommonAPI {
         configuration = new ConfigurationNode(f);
         configuration.load();
 
+        /* nerdlabs: apply config.yml on top of configuration.txt */
+        simpleConfig = SimpleConfig.load(this, dataDirectory);
+        simpleConfig.applyToMain(configuration);
+
         // Read web path
         webpath = configuration.getString("webpath", "web");
         // And whether to disable web file update
@@ -635,6 +641,7 @@ public class DynmapCore implements DynmapCommonAPI {
 
         if (markerapi != null) {
         	MarkerAPIImpl.completeInitializeMarkerAPI(markerapi);
+        	if (simpleConfig != null) simpleConfig.applyMarkers(markerapi);
         }
         
         playerfacemgr = new PlayerFaces(this);
@@ -2128,6 +2135,11 @@ public class DynmapCore implements DynmapCommonAPI {
         finalConfiguration.put("name", wname);
         finalConfiguration.put("title", world.getTitle());
         
+        /* nerdlabs: in simple mode the world's maps come from config.yml, not templates/worlds.txt */
+        ConfigurationNode simpleWorld = (simpleConfig != null) ? simpleConfig.worldConfig(wname, world.getEnvironment()) : null;
+        if (simpleWorld != null) {
+            finalConfiguration.extend(simpleWorld);
+        } else {
         ConfigurationNode worldConfiguration = getWorldConfigurationNode(wname);
         
         // Get the template.
@@ -2147,6 +2159,7 @@ public class DynmapCore implements DynmapCommonAPI {
         // Merge the finalConfiguration, templateConfiguration and worldConfiguration.
         finalConfiguration.extend(templateConfiguration);
         finalConfiguration.extend(worldConfiguration);
+        }
         
         Log.verboseinfo("Configuration of world " + world.getName());
         for(Map.Entry<String, Object> e : finalConfiguration.entrySet()) {
