@@ -83,20 +83,6 @@ jobs:
       - name: Build core
         run: ./gradlew :DynmapCoreAPI:build :DynmapCore:build --console=plain
 
-      - name: Upload DynmapCore jar
-        uses: actions/upload-artifact@v7
-        with:
-          path: target/DynmapCore-*.jar
-          archive: false
-          if-no-files-found: error
-
-      - name: Upload DynmapCoreAPI jar
-        uses: actions/upload-artifact@v7
-        with:
-          path: target/DynmapCoreAPI-*.jar
-          archive: false
-          if-no-files-found: error
-
   platform:
     needs: [version, core]
     runs-on: ubuntu-latest
@@ -154,12 +140,5 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           path: target/Dynmap-*.jar
-          archive: false
-          if-no-files-found: error
-
-      - name: Upload MD5
-        uses: actions/upload-artifact@v7
-        with:
-          path: target/Dynmap-*.jar.MD5
           archive: false
           if-no-files-found: error

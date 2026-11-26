@@ -87,8 +87,8 @@ shadowJar {
         }
     }
     destinationDirectory = file '../target'
-    archiveBaseName = "Dynmap-CE"
-    archiveClassifier = 'spigot'
+    archiveBaseName = "Dynmap-nerdlabs"
+    archiveClassifier = 'paper'
 }
 shadowJar.doLast {
     task ->

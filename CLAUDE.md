@@ -14,7 +14,7 @@ tracking the community edition closely, so the upstream contribution rules below
 ## Build Commands
 
 ```bash
-# Build the Paper plugin jar (requires JDK 25) -> target/Dynmap-CE-*-spigot.jar
+# Build the Paper plugin jar (requires JDK 25) -> target/Dynmap-nerdlabs-*-paper.jar
 ./gradlew :spigot:build
 
 # Build outputs go to /target directory
