@@ -34,8 +34,11 @@ function DynMap(options) {
 			alert(configuration.error);
 		}
 		else {
-			me.configure(configuration);
-			me.initialize();
+			// nerdlabs: pull in the other servers' worlds first (network map), then start
+			me.loadNetwork(configuration, function() {
+				me.configure(configuration);
+				me.initialize();
+			});
 		}
 	}, function(status, statusMessage) {
 		alert('Could not retrieve configuration: ' + statusMessage);
@@ -71,6 +74,42 @@ DynMap.prototype = {
 	nogui: false,
 	nocompass: false,
 	
+	// ---- nerdlabs network map: worlds from other servers carry netbase (URL prefix) and realname ----
+	loadNetwork: function(configuration, done) {
+		var me = this;
+		var servers = configuration.network || [];
+		if (!servers.length) { done(); return; }
+		if (configuration.servertitle) {
+			$.each(configuration.worlds, function(i, w) { w.title = configuration.servertitle + ' \u2013 ' + w.title; });
+		}
+		var pending = servers.length;
+		function finished() { if (--pending === 0) done(); }
+		$.each(servers, function(i, srv) {
+			$.ajax({ url: srv.base + me.formatUrl('configuration', { timestamp: me.lasttimestamp }), dataType: 'json', timeout: 5000 })
+				.done(function(rc) {
+					if (!rc || !rc.worlds) return;
+					$.each(rc.worlds, function(j, w) {
+						w.realname = w.name;
+						w.name = srv.name + '~' + w.name;
+						w.netbase = srv.base;
+						w.netprefix = srv.name + '~';
+						w.confighash = rc.confighash;
+						w.title = (srv.title || srv.name) + ' \u2013 ' + w.title;
+						configuration.worlds.push(w);
+					});
+				})
+				.fail(function() {
+					if (window.console) console.warn('Map server "' + srv.name + '" did not answer - its worlds are left out for now.');
+				})
+				.always(finished);
+		});
+	},
+	netUrl: function(world, url) {
+		return (world && world.netbase) ? world.netbase + url : url;
+	},
+	worldRealName: function(world) {
+		return world ? (world.realname || world.name) : '';
+	},
 	formatUrl: function(name, options) {
 		var url = this.options.url[name];
 		$.each(options, function(n,v) {
@@ -665,7 +704,15 @@ DynMap.prototype = {
 		}
 
 		$(me).trigger('worldupdating');
-		$.getJSON(me.formatUrl('update', { world: me.world.name, timestamp: me.lasttimestamp, reqid: me.reqid }), function(update) {
+		var uw = me.world;
+		$.getJSON(me.netUrl(uw, me.formatUrl('update', { world: me.worldRealName(uw), timestamp: me.lasttimestamp, reqid: me.reqid })), function(update) {
+				if (update && uw !== me.world) { // switched worlds while this was loading
+					setTimeout(function() { me.update(); }, me.options.updaterate);
+					return;
+				}
+				if (update && uw.netprefix && update.players) {
+					$.each(update.players, function(i, p) { p.world = uw.netprefix + p.world; });
+				}
 				me.reqid++; // Bump request ID always
 				if (!update) {
 					setTimeout(function() { me.update(); }, me.options.updaterate);
@@ -691,7 +738,7 @@ DynMap.prototype = {
 				if (!me.options.jsonfile) {
 					me.lasttimestamp = update.timestamp;
 				}
-				if(me.options.confighash != update.confighash) {
+				if((uw.netbase ? uw.confighash : me.options.confighash) != update.confighash) {
 				    window.location = me.getLink();
 					return;
 				}
@@ -782,8 +829,8 @@ DynMap.prototype = {
 		var tile = me.registeredTiles[tileName];
 
 		if(tile == null) {
-			var url = me.options.url.tiles;
-			tile = this.registeredTiles[tileName] = url + escape(me.world.name + '/' + tileName);
+			var url = me.netUrl(me.world, me.options.url.tiles);
+			tile = this.registeredTiles[tileName] = url + escape(me.worldRealName(me.world) + '/' + tileName);
 		}
 		return tile;
 	},

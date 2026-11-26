@@ -10,6 +10,26 @@ web:
   # Text in the browser tab
   title: "Nerdlabs Network Map"
 
+network:
+  # One map page for the whole network. All servers must be on the same machine.
+  #
+  # This server's name in the world list, e.g. "Lobby" -> "Lobby - world"
+  server-title: "Lobby"
+  #
+  # LOBBY ONLY: the other servers to show on this page. "port" is the web: port
+  # set in that server's own config.yml. Leave empty on every other server.
+  servers: []
+  #  - name: survival
+  #    title: "Survival"
+  #    port: 8124
+  #  - name: minigames
+  #    title: "Minigames"
+  #    port: 8125
+  #
+  # OTHER SERVERS: set to true so their map is only reachable through the lobby's page
+  # (keep false on the lobby itself).
+  private: false
+
 maps:
   # How close the closest zoom is. Affects disk space the most.
   #   low    = 4 pixels per block  (smallest)

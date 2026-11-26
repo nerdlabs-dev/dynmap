@@ -654,6 +654,8 @@ public class DynmapCore implements DynmapCommonAPI {
         // If not disabled, load and initialize the internal web server
         if (!isInternalWebServerDisabled) {
         	loadWebserver();
+        	/* nerdlabs: one map page for the whole network (lobby forwards /net/<server>/...) */
+        	if (simpleConfig != null) simpleConfig.registerNetwork(this);
         }
         
 

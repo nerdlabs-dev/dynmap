@@ -27,7 +27,8 @@ componentconstructors['markers'] = function(dynmap, configuration) {
 			
 	function loadmarkers(world) {
 		removeAllMarkers();
-		var url = concatURL(dynmap.options.url.markers, '_markers_/marker_' + world + '.json');
+		var w = dynmap.worlds[world]; // nerdlabs network map: markers come from the world's own server
+		var url = concatURL(dynmap.netUrl(w, dynmap.options.url.markers), '_markers_/marker_' + (w ? dynmap.worldRealName(w) : world) + '.json');
 		
 		$.getJSON(url, function(data) {
 			var ts = data.timestamp;
@@ -99,7 +100,7 @@ componentconstructors['markers'] = function(dynmap, configuration) {
 
 			var markerPosition = getPosition(marker);
 			marker.our_layer.setLatLng(markerPosition);
-			var url = concatURL(dynmap.options.url.markers, '_markers_/'+marker.icon+'.png');
+			var url = concatURL(dynmap.netUrl(dynmap.world, dynmap.options.url.markers), '_markers_/'+marker.icon+'.png');
 			
 			$(div)
 				.addClass('Marker')

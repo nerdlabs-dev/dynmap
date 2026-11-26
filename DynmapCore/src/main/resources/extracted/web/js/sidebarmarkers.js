@@ -40,7 +40,7 @@ componentconstructors['sidebarmarkers'] = function(dynmap, configuration) {
 			
 			$.each(set.markers, function (key, marker) {
 				var title = marker.label + ' (' + marker.x + ',' + marker.y + ',' + marker.z + ')';
-				var imgURL = concatURL(dynmap.options.url.markers, '_markers_/'+marker.icon+'.png');
+				var imgURL = concatURL(dynmap.netUrl(dynmap.world, dynmap.options.url.markers), '_markers_/'+marker.icon+'.png');
 				
 				$('<li/>')
 					.addClass('marker item')

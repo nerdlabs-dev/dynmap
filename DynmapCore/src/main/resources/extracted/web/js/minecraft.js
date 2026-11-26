@@ -12,7 +12,7 @@ function createMinecraftHead(player,size,completed,failed) {
 	else
 		faceimg = 'faces/' + size + 'x' + size + '/' + encodeURIComponent(player) + '.png';
 	
-	faceImage.src = concatURL(dynmap.options.url.markers, faceimg);
+	faceImage.src = concatURL(dynmap.netUrl(dynmap.world, dynmap.options.url.markers), faceimg);
 }
 
 function getMinecraftHead(player,size,completed) {

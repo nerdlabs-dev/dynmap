@@ -10,6 +10,9 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.dynmap.markers.MarkerAPI;
+import org.dynmap.servlet.NetworkProxyServlet;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.dynmap.markers.MarkerIcon;
 import org.dynmap.markers.MarkerSet;
 
@@ -69,6 +72,10 @@ public class SimpleConfig {
         if (!active) return;
 
         main.put("webserver-port", cfg.getInteger("web/port", 8123));
+        if (cfg.getBoolean("network/private", false)) {
+            // Only the lobby (on this machine) can reach this server's map; players use the lobby's page.
+            main.put("webserver-bindaddress", "127.0.0.1");
+        }
         String title = cfg.getString("web/title", "");
         if (title != null && title.length() > 0) main.put("webpage-title", title);
 
@@ -220,6 +227,53 @@ public class SimpleConfig {
         if (a >= 4) return ANGLES_4;
         if (a >= 2) return ANGLES_2;
         return ANGLES_1;
+    }
+
+    // ------------------------------------------------------------------ network (one page for all servers)
+
+    /** The other servers listed under network: servers: (lower-case name -> port). Empty if none. */
+    private Map<String, Integer> networkPorts() {
+        Map<String, Integer> ports = new LinkedHashMap<String, Integer>();
+        for (ConfigurationNode n : cfg.getNodes("network/servers")) {
+            String name = n.getString("name", null);
+            int port = n.getInteger("port", 0);
+            if (name == null || port <= 0) {
+                Log.warning(FILE_NAME + ": each network server needs a name and a port - skipping one entry.");
+                continue;
+            }
+            name = name.toLowerCase(Locale.ROOT).replaceAll("[^a-z0-9_-]", "");
+            if (name.length() > 0) ports.put(name, port);
+        }
+        return ports;
+    }
+
+    /** Called once the web server exists: adds /net/... forwarding and tells the page about the other servers. */
+    public void registerNetwork(DynmapCore core) {
+        if (!active) return;
+        final String myTitle = cfg.getString("network/server-title", "");
+        final Map<String, Integer> ports = networkPorts();
+        final JSONArray list = new JSONArray();
+        for (ConfigurationNode n : cfg.getNodes("network/servers")) {
+            String name = n.getString("name", "");
+            String key = name.toLowerCase(Locale.ROOT).replaceAll("[^a-z0-9_-]", "");
+            if (!ports.containsKey(key)) continue;
+            JSONObject o = new JSONObject();
+            o.put("name", key);
+            o.put("title", n.getString("title", name));
+            o.put("base", "net/" + key + "/");
+            list.add(o);
+        }
+        if (!ports.isEmpty()) {
+            core.addServlet("/net/*", new NetworkProxyServlet(ports));
+            Log.info("Network map: this page also shows " + ports.keySet() + ".");
+        }
+        core.events.addListener("buildclientconfiguration", new Event.Listener<JSONObject>() {
+            @Override
+            public void triggered(JSONObject t) {
+                if (myTitle != null && myTitle.length() > 0) t.put("servertitle", myTitle);
+                if (!list.isEmpty()) t.put("network", list);
+            }
+        });
     }
 
     // ------------------------------------------------------------------ markers
