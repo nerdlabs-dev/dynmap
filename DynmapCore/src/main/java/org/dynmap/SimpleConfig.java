@@ -80,6 +80,8 @@ public class SimpleConfig {
         if (title != null && title.length() > 0) main.put("webpage-title", title);
 
         main.put("hideores", cfg.getBoolean("world-display/hide-ores", true));
+        // Side panel (world/map list) open when the page loads; visitors can still close it.
+        main.put("sidebaropened", cfg.getBoolean("web/side-panel-open", true) ? "pinned" : "false");
 
         boolean showFaces = cfg.getBoolean("players/show-faces", true);
         main.put("showplayerfacesinmenu", showFaces);
@@ -150,7 +152,8 @@ public class SimpleConfig {
 
         ConfigurationNode w = new ConfigurationNode();
         w.put("enabled", isWorldEnabled(worldName, e));
-        w.put("extrazoomout", 2);
+        boolean small = isSmallWorld(worldName);
+        w.put("extrazoomout", small ? 0 : 2);
 
         String q = quality(cfg);
         String lighting = e.equals("nether") ? "nethershadows" : e.equals("the_end") ? "brightnight" : "shadows";
@@ -179,8 +182,24 @@ public class SimpleConfig {
         if (e.equals("normal") && cfg.getBoolean("maps/views/caves", false)) {
             maps.add(map("cave", "Caves", "ct", "iso_SE_60_" + q, "cave", "default", null));
         }
+        if (small) {
+            // Tiny world: only one step of zoom-out, and the page opens it at the closest zoom.
+            for (Map<String, Object> m : maps) {
+                m.put("mapzoomout", 1);
+                m.put("small-world", true);
+            }
+        }
         w.put("maps", maps);
         return w;
+    }
+
+    private boolean isSmallWorld(String worldName) {
+        List<String> small = cfg.getStrings("maps/small-worlds", null);
+        if (small == null) return false;
+        for (String s : small) {
+            if (s != null && s.equalsIgnoreCase(worldName)) return true;
+        }
+        return false;
     }
 
     private boolean isWorldEnabled(String worldName, String env) {

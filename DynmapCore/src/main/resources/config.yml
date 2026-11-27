@@ -9,6 +9,9 @@ web:
   port: 8123
   # Text in the browser tab
   title: "Nerdlabs Network Map"
+  # Show the side panel (list of servers, worlds and maps) when the page opens.
+  # Visitors can still close it with the arrow tab.
+  side-panel-open: true
 
 network:
   # One map page for the whole network. All servers must be on the same machine.
@@ -45,6 +48,10 @@ maps:
   # Leave empty to map every world of the kinds above,
   # or list world names to only map those, e.g. [ world, spawn ]
   worlds: []
+
+  # Very small worlds (a spawn room, a minigame arena ...): the page opens them
+  # fully zoomed in and doesn't let you zoom far out. List world names, e.g. [ gateroom ]
+  small-worlds: []
 
   views:
     flat: true      # top-down

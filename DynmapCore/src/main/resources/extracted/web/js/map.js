@@ -563,6 +563,7 @@ DynMap.prototype = {
 		var projectionChanged = (me.maptype && me.maptype.getProjection()) !== (map && map.projection);
 
 		var prevzoom = me.map.getZoom();
+		var wasSmall = !!(me.maptype && me.maptype.options.smallworld);
 
 		var prevworld = me.world;
 
@@ -586,6 +587,11 @@ DynMap.prototype = {
 
 		if(me.maptype.options.maxZoom < prevzoom)
 			prevzoom = me.maptype.options.maxZoom;
+		// nerdlabs: tiny worlds open fully zoomed in; leaving one goes back to the normal starting zoom
+		if (worldChanged && me.maptype.options.smallworld)
+			prevzoom = me.maptype.options.maxZoom;
+		else if (worldChanged && wasSmall)
+			prevzoom = Math.min(me.options.defaultzoom || 0, me.maptype.options.maxZoom);
 		me.map.options.maxZoom = me.maptype.options.maxZoom;
 		me.map.options.minZoom = me.maptype.options.minZoom;
 

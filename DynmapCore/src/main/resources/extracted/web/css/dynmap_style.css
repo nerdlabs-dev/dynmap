@@ -1299,3 +1299,56 @@ div.statusmessage {
     line-height: 38px;
     font-size: 24px;
 }
+
+/* nerdlabs: big, obvious tab for the side panel (world and map list).
+   Shows a left arrow when the panel is closed and a right arrow to close it when it is open. */
+.dynmap .hitbar {
+    top: 50%;
+    height: 96px;
+    margin-top: -48px;
+    width: 34px;
+    background: rgba(0, 0, 0, 0.65);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-right: none;
+    border-radius: 10px 0 0 10px;
+    cursor: pointer;
+}
+.dynmap .hitbar::after {
+    content: "\2039";
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    transform: translateY(-55%);
+    font-size: 52px;
+    line-height: 1;
+    color: #fff;
+    text-align: center;
+}
+.dynmap .hitbar:hover {
+    background: rgba(0, 0, 0, 0.85);
+}
+.dynmap .sidebar.pinned .hitbar {
+    right: 200px;
+}
+.dynmap .sidebar.pinned .hitbar::after {
+    content: "\203A";
+}
+
+/* nerdlabs: when the side panel is open, slide the compass and rotate button out from under it */
+.dynmap .compass, .dynmap .rotatebutton {
+    transition: right 0.3s ease-in-out;
+}
+.dynmap .sidebar.pinned ~ .compass {
+    right: 232px;
+}
+.dynmap .sidebar.pinned ~ .compass.compass_flat,
+.dynmap .sidebar.pinned ~ .compass.compass_N,
+.dynmap .sidebar.pinned ~ .compass.compass_E,
+.dynmap .sidebar.pinned ~ .compass.compass_S,
+.dynmap .sidebar.pinned ~ .compass.compass_W {
+    right: 221px;
+}
+.dynmap .sidebar.pinned ~ .rotatebutton {
+    right: 252px;
+}

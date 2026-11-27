@@ -86,6 +86,8 @@ componentconstructors['timeofdayclock'] = function(dynmap, configuration) {
 			weather
 				.removeClass('stormy_day stormy_night sunny_day sunny_night thunder_day thunder_night')
 				.addClass(cls + daynight);
+			// nerdlabs: clear weather needs no icon (the clock already shows the sun or moon)
+			weather.toggle(cls !== 'sunny');
 		};
 		
 		$(dynmap).bind('worldupdated', function(event, update) {
