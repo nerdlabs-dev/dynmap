@@ -1259,6 +1259,7 @@ div.statusmessage {
   background: linear-gradient(90deg, var(--status-error) 30%, transparent 80%);
   font-weight: 300;
   border-radius: 5px;
+  }
 }
 
 .logincontainer {
