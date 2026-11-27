@@ -109,6 +109,7 @@ public class DynmapCore implements DynmapCommonAPI {
     public ConfigurationNode world_config;
     /* nerdlabs: config.yml (simple settings); null until initConfiguration runs */
     private SimpleConfig simpleConfig;
+    public SimpleConfig getSimpleConfig() { return simpleConfig; }
     public ComponentManager componentManager = new ComponentManager();
     public DynmapListenerManager listenerManager = new DynmapListenerManager(this);
     public PlayerFaces playerfacemgr;

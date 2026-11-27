@@ -1352,3 +1352,167 @@ div.statusmessage {
 .dynmap .sidebar.pinned ~ .rotatebutton {
     right: 252px;
 }
+
+/* =====================================================================
+   nerdlabs: modern look - dark, rounded, translucent controls
+   ===================================================================== */
+
+/* Zoom buttons and layer picker */
+.dynmap .leaflet-bar {
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.45);
+    overflow: hidden;
+}
+.dynmap .leaflet-bar a,
+.dynmap .leaflet-bar a:hover {
+    width: 32px;
+    height: 32px;
+    line-height: 32px;
+    font-size: 20px;
+    font-weight: 600;
+    color: #fff;
+    background-color: rgba(18, 22, 32, 0.78);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+.dynmap .leaflet-bar a:hover {
+    background-color: rgba(40, 46, 62, 0.92);
+}
+.dynmap .leaflet-bar a.leaflet-disabled {
+    color: rgba(255, 255, 255, 0.3);
+    background-color: rgba(18, 22, 32, 0.6);
+}
+.dynmap .leaflet-control-layers {
+    background: rgba(18, 22, 32, 0.82);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.45);
+}
+.dynmap .leaflet-control-layers-toggle {
+    width: 36px;
+    height: 36px;
+    background-size: 26px 26px;
+}
+.dynmap .leaflet-control-layers-expanded {
+    padding: 8px 12px 8px 8px;
+}
+.dynmap .leaflet-control-layers label {
+    color: #fff;
+}
+
+/* Location and Saved spot boxes */
+.dynmap .coord-control {
+    color: #fff;
+    background-color: rgba(18, 22, 32, 0.78);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.45);
+    padding: 6px 10px;
+    min-width: 110px;
+    font-size: 12px;
+    line-height: 1.5;
+}
+.dynmap .coord-control .coord-control-label {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+.dynmap .coord-control .coord-control-value {
+    font-family: Consolas, Menlo, monospace;
+    font-size: 13px;
+    font-weight: bold;
+}
+.dynmap .saved-control .saved-copy {
+    display: block;
+    width: 100%;
+    margin-top: 5px;
+    padding: 3px 0;
+    font-size: 12px;
+    font-weight: 600;
+    color: #fff;
+    background: #ff4d6d;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+.dynmap .saved-control .saved-copy:hover {
+    background: #ff6b85;
+}
+.dynmap .saved-control .saved-copy:disabled {
+    background: rgba(255, 255, 255, 0.15);
+    color: rgba(255, 255, 255, 0.45);
+    cursor: default;
+}
+
+/* Link button (bottom left) */
+.dynmap .dynmap-link {
+    background: rgba(18, 22, 32, 0.78);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 10px;
+    padding: 4px;
+}
+.dynmap .dynmap-link a,
+.dynmap .dynmap-link a:hover {
+    background-color: transparent;
+}
+.dynmap .dynmap-link a:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+/* Clock at the top */
+.largeclock {
+    background: rgba(18, 22, 32, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-top: none;
+    border-radius: 0 0 14px 14px;
+}
+
+/* Side panel: labelled map buttons ("Flat", "3D", "Caves") instead of tiny unlabeled squares */
+.dynmap .sidebar {
+    background: rgba(14, 17, 26, 0.82);
+}
+.dynmap .maplist .item {
+    width: auto;
+    height: 26px;
+    margin: 4px 4px 4px 0;
+    padding: 2px 10px 2px 4px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+}
+.dynmap .maplist .item:hover {
+    background: rgba(255, 255, 255, 0.14);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+.dynmap .maplist .item.selected {
+    background: rgba(255, 77, 109, 0.28);
+    border: 1px solid rgba(255, 107, 133, 0.85);
+}
+.dynmap .maplist .item > a {
+    text-indent: 0;
+    height: 26px;
+    line-height: 26px;
+    padding-left: 28px;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    background-size: 22px 22px;
+    background-position: 0 center;
+}
+.dynmap .worldlist .world {
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+
+/* Keep the top-left controls in a fixed order: zoom, layers, Location, Saved spot */
+.dynmap .leaflet-top.leaflet-left {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+.dynmap .leaflet-top.leaflet-left .leaflet-control-zoom { order: 0; }
+.dynmap .leaflet-top.leaflet-left .leaflet-control-layers { order: 1; }
+.dynmap .leaflet-top.leaflet-left .coord-control { order: 2; }
+.dynmap .leaflet-top.leaflet-left .saved-control { order: 3; }

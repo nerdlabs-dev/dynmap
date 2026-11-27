@@ -28,6 +28,8 @@ import org.dynmap.markers.MarkerSet;
 public class SimpleConfig {
 
     public static final String FILE_NAME = "config.yml";
+    public static final String TEXTURE_SHADER = "nerdlabs-texture";
+    public static final String TEXTURE_CAVE_SHADER = "nerdlabs-texture-cave";
 
     /** 3D compass directions in the order the rotate button walks through them. */
     private static final String[] ANGLES_1 = { "SE" };
@@ -37,10 +39,12 @@ public class SimpleConfig {
 
     private final ConfigurationNode cfg;
     private final boolean active;
+    private final File dataDir;
 
-    private SimpleConfig(ConfigurationNode cfg, boolean active) {
+    private SimpleConfig(ConfigurationNode cfg, boolean active, File dataDir) {
         this.cfg = cfg;
         this.active = active;
+        this.dataDir = dataDir;
     }
 
     /** Loads (and on first run creates) config.yml in the dynmap folder. */
@@ -48,7 +52,7 @@ public class SimpleConfig {
         File f = new File(dataDirectory, FILE_NAME);
         if (!core.createDefaultFileFromResource("/" + FILE_NAME, f)) {
             Log.warning("Could not create " + FILE_NAME + " - using configuration.txt only.");
-            return new SimpleConfig(new ConfigurationNode(), false);
+            return new SimpleConfig(new ConfigurationNode(), false, dataDirectory);
         }
         ConfigurationNode n = new ConfigurationNode(f);
         n.load();
@@ -58,11 +62,34 @@ public class SimpleConfig {
         } else {
             Log.info("Using " + FILE_NAME + " (detail: " + quality(n) + ", 3D angles: " + angles(n).length + ").");
         }
-        return new SimpleConfig(n, !advanced);
+        // Make sure the folder for texture packs exists so it's easy to find.
+        new File(dataDirectory, "texturepacks").mkdirs();
+        return new SimpleConfig(n, !advanced, dataDirectory);
     }
 
     public boolean isActive() {
         return active;
+    }
+
+    /**
+     * The texture pack named in config.yml (a zip or folder in plugins/dynmap/texturepacks), or null for the
+     * normal Minecraft textures. Missing files are reported and ignored.
+     */
+    public String texturePack() {
+        if (!active) return null;
+        String tp = cfg.getString("maps/texture-pack", "");
+        if (tp == null || tp.trim().length() == 0) return null;
+        tp = tp.trim();
+        if (tp.contains("..") || tp.contains("/") || tp.contains("\\")) {
+            Log.warning(FILE_NAME + ": texture-pack should be just the file or folder name inside the texturepacks folder.");
+            return null;
+        }
+        File f = new File(new File(dataDir, "texturepacks"), tp);
+        if (!f.exists()) {
+            Log.warning(FILE_NAME + ": texture pack '" + tp + "' not found in " + f.getParentFile().getPath() + " - using the normal textures.");
+            return null;
+        }
+        return tp;
     }
 
     // ------------------------------------------------------------------ main settings
@@ -156,6 +183,8 @@ public class SimpleConfig {
         w.put("extrazoomout", small ? 0 : 2);
 
         String q = quality(cfg);
+        boolean pack = texturePack() != null;
+        String shader = pack ? TEXTURE_SHADER : "stdtexture";
         String lighting = e.equals("nether") ? "nethershadows" : e.equals("the_end") ? "brightnight" : "shadows";
         String background = e.equals("nether") ? "#300806" : null;
         String base3d = e.equals("nether") ? "nether" : e.equals("the_end") ? "the_end" : "surface";
@@ -163,7 +192,7 @@ public class SimpleConfig {
 
         List<Map<String, Object>> maps = new ArrayList<Map<String, Object>>();
         if (cfg.getBoolean("maps/views/flat", true)) {
-            maps.add(map("flat", "Flat", "flat", "iso_S_90_" + q, "stdtexture", lighting, background));
+            maps.add(map("flat", "Flat", "flat", "iso_S_90_" + q, shader, lighting, background));
         }
         if (cfg.getBoolean("maps/views/3d", true)) {
             String[] angles = angles(cfg);
@@ -173,7 +202,7 @@ public class SimpleConfig {
                 String name = (i == 0) ? base3d : base3d + "_" + a.toLowerCase(Locale.ROOT);
                 String prefix = (i == 0) ? prefix3d : prefix3d + "_" + a.toLowerCase(Locale.ROOT);
                 String title = angles.length == 1 ? "3D" : "3D (" + a + ")";
-                Map<String, Object> m = map(name, title, prefix, "iso_" + a + "_30_" + q, "stdtexture", lighting, background);
+                Map<String, Object> m = map(name, title, prefix, "iso_" + a + "_30_" + q, shader, lighting, background);
                 m.put("angle-group", base3d); // used by the web page's rotate button
                 m.put("angle", a);
                 maps.add(m);

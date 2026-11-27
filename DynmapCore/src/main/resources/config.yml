@@ -58,6 +58,12 @@ maps:
     3d: true        # angled view
     caves: false    # see-through cave view (overworld only)
 
+  # Texture pack for the maps. Put the pack's .zip (no need to unzip) in
+  # plugins/dynmap/texturepacks/ and write its exact file name here, e.g.
+  #   texture-pack: "MyPack-64x.zip"
+  # Leave empty for the normal Minecraft look. After changing it: /dynmap fullrender <world>
+  texture-pack: ""
+
   # How many sides the 3D view is drawn from: 1, 2, 4 or 8.
   # Each extra angle costs about as much disk space as the first one.
   3d-angles: 4

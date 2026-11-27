@@ -48,6 +48,22 @@ public class HDMapManager {
                 shaders.put(shader.getName(), shader);
             }
         }
+        /* nerdlabs: config.yml texture-pack -> shaders that render with that pack */
+        org.dynmap.SimpleConfig sc = core.getSimpleConfig();
+        String tp = (sc != null) ? sc.texturePack() : null;
+        if (tp != null) {
+            ConfigurationNode n = new ConfigurationNode();
+            n.put("name", org.dynmap.SimpleConfig.TEXTURE_SHADER);
+            n.put("texturepack", tp);
+            shaders.put(org.dynmap.SimpleConfig.TEXTURE_SHADER, new TexturePackHDShader(core, n));
+            ConfigurationNode c = new ConfigurationNode();
+            c.put("name", org.dynmap.SimpleConfig.TEXTURE_CAVE_SHADER);
+            c.put("texturepack", tp);
+            c.put("max-sky-light", 0);
+            c.put("min-emitted-light", 1);
+            shaders.put(org.dynmap.SimpleConfig.TEXTURE_CAVE_SHADER, new TexturePackHDCaveShader(core, c));
+            Log.info("Maps use texture pack '" + tp + "' from the texturepacks folder.");
+        }
         Log.info("Loaded " + shaders.size() + " shaders.");
     }
 
